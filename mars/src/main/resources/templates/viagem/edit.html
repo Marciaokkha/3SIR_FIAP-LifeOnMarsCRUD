@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Viagem</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="icon" href="/space-mars_115178.ico">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+	<style>
+		:root {
+			--bs-primary: #ff0000;
+		}
+	</style>
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm navbar-dark bg-primary bg-danger">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="/">Life on Mars</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="mynavbar">
+				<ul class="navbar-nav me-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="/viagem">Viagens</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	
+	<ul id="erros"></ul>
+	
+	<form method="post" action="/viagem/edit" id="frmViagem" >
+		<input type="hidden" name="id" th:value="${viagem.id}"/>
+		<p>Data de decolagem: <input type="text" name="dataDecolagem" id="dataDecolagem" th:value="${viagem.dataDecolagem}"/></p>
+		<p>Duração da estadia em Marte: <input type="number" name="diasEstadia" id="diasEstadia" th:value="${viagem.diasEstadia}" min="1"/></p>
+		<p>Assentos disponíveis: <input type="numer" name="qtdAssentos" id="qtdAssentos" th:value="${viagem.qtdAssentos}" min="3"/></p>
+		<p>Modelo na nave: <input type="text" name="modeloNave" id="modeloNave" th:value="${viagem.modeloNave}"/></p>
+		<p>Nome do primeiro comandante: <input type="text" name="nomePrimeiroComandante" id="nomePrimeiroComandante" th:value="${viagem.nomePrimeiroComandante}"/></p>
+		<p>Matrícula do primeiro comandante: <input type="text" name="matriculaPrimeiroComandante" id="matriculaPrimeiroComandante" th:value="${viagem.matriculaPrimeiroComandante}"/></p>
+		<p>Nome do segundo comandante: <input type="text" name="nomeSegundoComandante" id="nomeSegundoComandante" th:value="${viagem.nomeSegundoComandante}"/></p>
+		<p>Matrícula do segundo comandante: <input type="text" name="matriculaSegundoComandante" id="matriculaSegundoComandante" th:value="${viagem.matriculaSegundoComandante}"/></p>
+		<input type="button" value="Salvar" onclick="salvar()"/>
+	</form>
+</body>
+</html>
+<script>
+	let responseEntity; 
+	
+	function salvar()
+	{
+		const form = document.getElementById("frmViagem");
+		const formData = new FormData(form);
+		const jsonBody = JSON.stringify(Object.fromEntries(formData.entries()));
+		const header = new Headers();
+		header.append("Content-Type", "application/json");
+		
+		const requestOption ={
+			method: 'POST',
+			headers: header, 
+			body: jsonBody
+		};
+		
+		fetch('/viagem/edit', requestOption)
+		.then(response => {
+			responseEntity = response;
+			return response.json();
+		})
+		.then(data => tratrarRedirect(data))
+		.catch(error => console.log(error));
+	}
+	
+	function tratrarRedirect(data){
+		if(responseEntity.ok){
+			alert('Viagem atualizada com sucesso');
+			window.location.href= '/viagem';
+			return; 
+		}
+		
+		let listErros = document.getElementById('erros');
+		listErros.innerHTML = '';
+		let itemListError = '';
+		
+		if(data.hasOwnProperty('dataDecolagem'))
+			itemListError = `<li class='text-danger'>${data.dataDecolagem}</li>`;
+			
+		if(data.hasOwnProperty('diasEstadia'))
+			itemListError += `<li class='text-danger'>${data.diasEstadia}</li>`;
+			
+		if(data.hasOwnProperty('qtdAssentos'))
+			itemListError += `<li class='text-danger'>${data.qtdAssentos}</li>`;
+			
+		if(data.hasOwnProperty('modeloNave'))
+			itemListError += `<li class='text-danger'>${data.modeloNave}</li>`;
+				
+		if(data.hasOwnProperty('nomePrimeiroComandante'))
+			itemListError += `<li class='text-danger'>${data.nomePrimeiroComandante}</li>`;
+					
+		if(data.hasOwnProperty('matriculaPrimeiroComandante'))
+			itemListError += `<li class='text-danger'>${data.matriculaPrimeiroComandante}</li>`;
+						
+		if(data.hasOwnProperty('nomeSegundoComandante'))
+			itemListError += `<li class='text-danger'>${data.nomeSegundoComandante}</li>`;
+			
+		if(data.hasOwnProperty('matriculaSegundoComandante'))
+			itemListError += `<li class='text-danger'>${data.matriculaSegundoComandante}</li>`;
+				
+		listErros.innerHTML = itemListError;
+	}	
+</script>
