@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,6 +44,8 @@ public class ViagemController {
 	
 	@PostMapping("/create")
 	public ResponseEntity<Viagem> createForm(@Valid @RequestBody Viagem objViagem ){ 
+		//Aqui calculamos a data de retorno, e garantimos que ela seja salva no formato
+		//dd/MM/yyyy
 		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");	
 		LocalDate dataPartida = LocalDate.parse(objViagem.getDataDecolagem(),fmt);
 	    LocalDate dataRetorno = dataPartida.plusDays(520 + Integer.parseInt((objViagem.getDiasEstadia())));
@@ -64,8 +67,10 @@ public class ViagemController {
 		}
 	}
 	
-	@PostMapping("/edit")
+	@PutMapping("/edit")
 	public ResponseEntity<Viagem> updateForm(@Valid @RequestBody Viagem objViagem ){
+		//Aqui calculamos a data de retorno, e garantimos que ela seja salva no formato
+		//dd/MM/yyyy
 		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");	
 		LocalDate dataPartida = LocalDate.parse(objViagem.getDataDecolagem(),fmt);
 		LocalDate dataRetorno = dataPartida.plusDays(520 + Integer.parseInt((objViagem.getDiasEstadia())));
@@ -74,7 +79,7 @@ public class ViagemController {
 		viagemRepository.save(objViagem);
 		return new ResponseEntity<Viagem>(objViagem, HttpStatus.OK);
 	}
-	
+		
 	@GetMapping("/delete/{id}")
 	public String delete(@PathVariable("id")Long id) {
 		viagemRepository.deleteById(id);

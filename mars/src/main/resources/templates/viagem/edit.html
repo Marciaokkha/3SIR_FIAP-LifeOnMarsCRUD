@@ -31,7 +31,7 @@
 	
 	<ul id="erros"></ul>
 	
-	<form method="post" action="/viagem/edit" id="frmViagem" >
+	<form method="put" action="/viagem/edit" id="frmViagem" >
 		<input type="hidden" name="id" th:value="${viagem.id}"/>
 		<p>Data de decolagem: <input type="text" name="dataDecolagem" id="dataDecolagem" th:value="${viagem.dataDecolagem}"/></p>
 		<p>Duração da estadia em Marte: <input type="number" name="diasEstadia" id="diasEstadia" th:value="${viagem.diasEstadia}" min="1"/></p>
@@ -57,7 +57,7 @@
 		header.append("Content-Type", "application/json");
 		
 		const requestOption ={
-			method: 'POST',
+			method: 'PUT',
 			headers: header, 
 			body: jsonBody
 		};
